@@ -40,18 +40,18 @@ app.post('/addproduct', async (req, res) => {
   }
 });
 
-app.put('/updateproduct', async (req, res) => {
+app.put('/updateproduct/:id', async (req, res) => {
   try {
-    const product = await Product.findByIdAndUpdate(req.body._id, req.body, { new: true });
+    const product = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
     res.status(200).send(product);
   } catch (error) {
     res.status(500).send(error);
   }
 });
 
-app.delete('/removeproduct', async (req, res) => {
+app.delete('/product/:id', async function(req, res){
   try {
-    const product = await Product.findByIdAndDelete(req.body._id);
+    const product = await Product.findByIdAndDelete(req.params.id);
     res.status(200).send(product);
   } catch (error) {
     res.status(500).send(error);

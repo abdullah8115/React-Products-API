@@ -1,0 +1,18 @@
+.App {
+  text-align: center;
+  /* font-size: 24px; */
+  margin-bottom: 20px;
+}
+
+.add-product {
+  margin-bottom: 20px;
+}
+
+.row {
+  display: flex;
+  justify-content: center;
+}
+
+.column {
+  margin: 0 10px;
+}
