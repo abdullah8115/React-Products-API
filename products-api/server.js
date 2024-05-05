@@ -39,7 +39,14 @@ app.post('/addproduct', async (req, res) => {
     res.status(500).send(error);
   }
 });
-
+app.get('/product/:id', async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id, req.body, { new: true });
+    res.status(200).send(product);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
 app.put('/updateproduct/:id', async (req, res) => {
   try {
     const product = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -49,8 +56,9 @@ app.put('/updateproduct/:id', async (req, res) => {
   }
 });
 
-app.delete('/product/:id', async function(req, res){
+app.delete('/removeproduct/:id', async function(req, res){
   try {
+    console.log(req.params.id)
     const product = await Product.findByIdAndDelete(req.params.id);
     res.status(200).send(product);
   } catch (error) {

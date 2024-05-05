@@ -8,10 +8,12 @@ const DeleteProduct = () => {
   const [product, setProduct] = useState(null);
 
   const handleChange = (e) => {
+    console.log(e.target.value)
     setProductId(e.target.value);
   };
 
   const handleFetchProduct = async () => {
+    console.log("products",product)
     try {
       const response = await axios.get(`http://localhost:3001/product/${productId}`);
       setProduct(response.data);
@@ -50,7 +52,7 @@ const DeleteProduct = () => {
             <input
               type="text"
               name="productId"
-              value={productId}
+              defaultValue={productId}
               onChange={handleChange}
               className="input"
             />
