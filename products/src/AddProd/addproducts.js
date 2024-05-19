@@ -39,7 +39,7 @@ const styles = {
     padding: '20px',
     border: '1px solid #ccc',
     backgroundColor: 'white',
-    zIndex: '1000',  // Ensure it sits on top of other content
+    zIndex: '1000',
   }
 };
 
@@ -52,6 +52,7 @@ const AddProduct = () => {
     quantity: 0,
     tags: [],
   });
+  const [file, setFile] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
   const [productId, setProductId] = useState('');
 
@@ -64,16 +65,45 @@ const AddProduct = () => {
     }
   };
 
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!product.title || !product.description) {
       alert('Title and description are required.');
       return;
     }
+
+    const formData = new FormData();
+    formData.append('title', product.title);
+    formData.append('description', product.description);
+    formData.append('price', product.price);
+    formData.append('discount', product.discount);
+    formData.append('quantity', product.quantity);
+    formData.append('tags', product.tags);
+    if (file) {
+      formData.append('image', file);
+    }
+
     try {
-      const response = await axios.post('http://localhost:3001/addproduct', product);
-      setProductId(response.data._id);  // Assuming response.data._id contains the new product ID
+      const response = await axios.post('http://localhost:3001/addproduct', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      setProductId(response.data._id); // Assuming response.data._id contains the new product ID
       setShowPopup(true);
+      setProduct({
+        title: '',
+        description: '',
+        price: 0,
+        discount: 0,
+        quantity: 0,
+        tags: [],
+      });
+      setFile(null);
       alert('Product added successfully!');
     } catch (error) {
       console.error('Error adding product:', error);
@@ -90,12 +120,34 @@ const AddProduct = () => {
   return (
     <>
       <form onSubmit={handleSubmit} style={styles.form}>
-        <label style={styles.label}>Title:<input type="text" name="title" onChange={handleChange} style={styles.input} /></label>
-        <label style={styles.label}>Description:<input type="text" name="description" onChange={handleChange} style={styles.input} /></label>
-        <label style={styles.label}>Price:<input type="number" name="price" onChange={handleChange} style={styles.input} /></label>
-        <label style={styles.label}>Discount:<input type="number" name="discount" onChange={handleChange} style={styles.input} /></label>
-        <label style={styles.label}>Quantity:<input type="number" name="quantity" onChange={handleChange} style={styles.input} /></label>
-        <label style={styles.label}>Tags (comma separated):<input type="text" name="tags" onChange={handleChange} style={styles.input} /></label>
+        <label style={styles.label}>
+          Title:
+          <input type="text" name="title" value={product.title} onChange={handleChange} style={styles.input} />
+        </label>
+        <label style={styles.label}>
+          Description:
+          <input type="text" name="description" value={product.description} onChange={handleChange} style={styles.input} />
+        </label>
+        <label style={styles.label}>
+          Price:
+          <input type="number" name="price" value={product.price} onChange={handleChange} style={styles.input} />
+        </label>
+        <label style={styles.label}>
+          Discount:
+          <input type="number" name="discount" value={product.discount} onChange={handleChange} style={styles.input} />
+        </label>
+        <label style={styles.label}>
+          Quantity:
+          <input type="number" name="quantity" value={product.quantity} onChange={handleChange} style={styles.input} />
+        </label>
+        <label style={styles.label}>
+          Tags (comma separated):
+          <input type="text" name="tags" value={product.tags.join(', ')} onChange={handleChange} style={styles.input} />
+        </label>
+        <label style={styles.label}>
+          Image:
+          <input type="file" name="image" onChange={handleFileChange} style={styles.input} />
+        </label>
         <button type="submit" style={styles.button}>Add Product</button>
       </form>
       {showPopup && (
